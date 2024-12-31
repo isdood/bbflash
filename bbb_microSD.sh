@@ -1,0 +1,126 @@
+#!/bin/bash
+  clear;
+  echo "  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+  echo "  Beagle Bone Black Arch Installer";
+  echo "  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+  username="$(who am i | awk '{print $1}')";  
+  if [[ $USER -eq root ]]
+   then
+    sleep 3;
+    fuser -k /home/$username/mnt 2>/dev/null;
+    umount -f /home/$username/mnt 2>/dev/null;
+    umount -f /dev/sdd 2>/dev/null;
+    
+    rm -r /home/$username/mnt 2>/dev/null;
+    mkdir /home/$username/mnt 2>/dev/null;
+    dd if=/dev/zero of=/dev/sdd bs=1M count=8 2>/dev/null
+    sfdisk -f --delete /dev/sdd >/dev/null;
+    echo "";
+    echo -n "   Partitions deleted";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -e 'start=2048 size=+ type=L\n' | sfdisk --no-reread /dev/sdd >/dev/null;
+    echo "";
+    echo -n "   Creating new partition";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+####################
+    echo "";
+    echo -n "   Creating ext4 filesystem";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    mkfs.ext4 /dev/sdd1 >/dev/null 2>/dev/null;
+    mount /dev/sdd1 /home/$username/mnt;
+  # wget http://os.archlinuxarm.org/os/ArchLinuxARM-am33x-latest.tar.gz;
+    echo "";
+    echo -n "   Extracting tarball to microSD";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo "";
+    echo "";
+    echo "         ~~ Please wait. ~~";
+    bsdtar -xpf ArchLinuxARM-am33x-latest.tar.gz -C mnt >/dev/null;
+    echo "";
+    echo -n "   Syncing";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    sync >/dev/null;
+##################
+    dd if=mnt/boot/MLO of=/dev/sdd count=1 seek=1 conv=notrunc bs=128k >/dev/null 2>/dev/null;
+    dd if=mnt/boot/u-boot.img of=/dev/sdd count=2 seek=1 conv=notrunc bs=384k >/dev/null 2>/dev/null;
+############################
+    echo "";
+    echo -n "   Copying files to microSD";
+sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo -n " .";
+    sleep 1;
+    echo "";
+    echo "";
+    echo "         ~~ Please wait. ~~";
+    cp /home/$username/ArchLinuxARM-am33x-latest.tar.gz /home/$username/mnt/home/alarm/;
+    cp /home/$username/bbb_eMMC.sh /home/$username/mnt/home/alarm;
+    sync;
+    echo "";
+############################
+    umount mnt;
+    sync;
+    echo "";
+    echo "         ~~~~~~ DONE ~~~~~~";
+    sleep 1;
+    echo "";
+    sleep 1;
+    echo "";
+    sleep 1;
+    echo "";
+    sleep 1;
+    echo "    Remove microSD & insert into";
+    echo "    Beagle Bone Black. Hold the button";
+    echo "    found near the microSD slot while you";
+    echo "    apply power. Let go once all lights";
+    echo "    begin flashing.";
+    sleep 1;
+    echo "";
+    sleep 1;
+    echo "";
+    sleep 1;
+    echo "";
+    sleep 1;
+    echo "      ~~~~~~~~~~~~~~~~~~~~";
+    echo "";
+  else
+    echo "     Must be ran as root!";
+    sleep 3;
+    echo "";
+    echo "";
+    echo "     ~~~~ EXITING ~~~~";
+    sleep 2;
+    exit;
