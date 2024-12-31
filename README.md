@@ -1,2 +1,2 @@
 # bbflash
-Scripts to automating the flashing of Arch Linux onto a BeagleBoneBlack.
+Scripts for automating the flashing of Arch Linux onto a BeagleBoneBlack.
